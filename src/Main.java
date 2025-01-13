@@ -34,15 +34,22 @@ class Book {
         this.author = author;
         this.isbn = isbn;
         isOutOnLoan = false;
+        whoBorrowMe = Optional.empty();
     }
 
     public void lendingBook(User user) {
         isOutOnLoan = true;
-        whoBorrowMe = user;
+        whoBorrowMe = Optional.of(user);
+        user.borrowingBook(this);
     }
 
     public void returnOfBook() {
         isOutOnLoan = false;
+        if (whoBorrowMe.isPresent()) whoBorrowMe.get().returningBook(this);
+        else {
+            //if else, search all users of borrowList
+
+        }
     }
 
     public boolean isOutOnLoan() {
@@ -109,18 +116,14 @@ class Library {
 
 //  --------------------for rending and returning------------
 
-    public void lendsBook(Book book,User user){
-        book.lendingBook();
-        user.borrowingBook(book);
+    public void lendsBook(Book book, User user) {
+        book.lendingBook(user);
     }
 
-    public void getBooksBack(Book book){
+    public void getBooksBack(Book book) {
         book.returnOfBook();
 
     }
-
-
-
 
 
 //  --------------------for searching-------------------
@@ -147,7 +150,7 @@ class Library {
 //		//general expression
 //	}
 
-    public List<String> getUserIDList(){
+    public List<String> getUserIDList() {
         return userList.stream()
                 .map(User::getUserID)
                 .toList();
@@ -176,8 +179,7 @@ class ScannerUtil {
     // isbn-digit-check worked properly
     public boolean isbnPatternDigitCheck(String isbn) {
         boolean flag = false;
-        Matcher matcher = isbnPattern.matcher(isbn);
-        if (matcher.matches()) {
+        if (isbnPattern.matcher(isbn).matches()) {
             isbn = isbn.replace("ISBN", "").replace("-", "").replace(" ", "");
             char[] isbnChar = isbn.toCharArray();
             int[] isbnInt = new int[isbnChar.length];
@@ -254,12 +256,12 @@ class Front {
     //library duplicating id checking
     private String makeID() {
         List<String> idList = library.getUserIDList();
-        while (true){
+        while (true) {
             double random = Math.random() * 10000;
             String id = String.valueOf((int) random);
             boolean isDuplicating = idList.stream()
                     .anyMatch(ID -> ID.equals(id));
-            if(!isDuplicating) return id;
+            if (!isDuplicating) return id;
         }
     }
 
@@ -267,12 +269,12 @@ class Front {
         String title = scUtil.strCheck("Type the title of book: ");
         String author = scUtil.strCheck("Type the author of book: ");
         String isbn = scUtil.isbnCheck("Type the ISBN of book: ");
-        library.registerBook(new Book(title,author,isbn));
+        library.registerBook(new Book(title, author, isbn));
     }
 
     public void registerNewUser() {
         String userName = scUtil.strCheck("Type your name: ");
-        library.registerUser(new User(userName,makeID()));
+        library.registerUser(new User(userName, makeID()));
 
     }
 
