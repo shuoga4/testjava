@@ -48,6 +48,9 @@ class Book {
         if (whoBorrowMe.isPresent()) whoBorrowMe.get().returningBook(this);
         else {
             //if else, search all users of borrowList
+            //my first attempt was making static method on library that will search all user borrowing data
+            //but static makes static everything and thats scary as f-
+
 
         }
     }
@@ -59,6 +62,7 @@ class Book {
     public String getBookInfo() {
         return "Title: \"" + title + "\" Author: \"" + author + "\" isbn: \"" + isbn + "\"";
     }
+
 }
 
 
@@ -93,9 +97,15 @@ class User {
         return userID;
     }
 
+    public String getBorrowingBookNameData(){
+
+    }
+
+
     // need getBorrowList
 }
 
+// im just making class only if code looks cooler. so i dont know what encapsulation looks like.
 class Library {
     private final List<Book> bookList;
     private final List<User> userList;
@@ -124,6 +134,8 @@ class Library {
         book.returnOfBook();
 
     }
+// ---------------------for global searching-----------
+
 
 
 //  --------------------for searching-------------------
@@ -179,6 +191,7 @@ class ScannerUtil {
     // isbn-digit-check worked properly
     public boolean isbnPatternDigitCheck(String isbn) {
         boolean flag = false;
+
         if (isbnPattern.matcher(isbn).matches()) {
             isbn = isbn.replace("ISBN", "").replace("-", "").replace(" ", "");
             char[] isbnChar = isbn.toCharArray();
