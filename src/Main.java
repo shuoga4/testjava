@@ -4,7 +4,7 @@ import java.util.regex.*;
 public class Main {
     public static void main(String[] args) {
         Book book = new Book("Harry Potter and the Philosopher's Stone", "J.K.Rowling", "978-4863890077");
-        System.out.println(book.getBookInfo());
+        System.out.println("title: " + book.title + ",author: " + book.author + ",isbn: " + book.isbn);
 
 
         ScannerUtil scUtil = new ScannerUtil();
@@ -19,11 +19,59 @@ public class Main {
     }
 }
 
+// if(public final variable == (private final variable + getter)) {
+// delete getter and replace private final variable to public final variable
+// }
+
+//class Book {
+//    private final String title; // maybe public ?
+//    private final String author;
+//    private final String isbn;
+//    private boolean isOutOnLoan;
+//    // when ppl borrow a book, this User variable hold info about who is borrowing. and when ppl returen the book,
+//    // use this User info to remove the book from their borrowList.
+//    private Optional<User> whoBorrowMe;
+//
+//    Book(String title, String author, String isbn) {
+//        this.title = title;
+//        this.author = author;
+//        this.isbn = isbn;
+//        isOutOnLoan = false;
+//        whoBorrowMe = Optional.empty();
+//    }
+//
+//    public void lendingBook(User user) {
+//        isOutOnLoan = true;
+//        whoBorrowMe = Optional.of(user);
+//        user.borrowingBook(this);
+//    }
+//
+//    public void returnOfBook() {
+//        isOutOnLoan = false;
+//        if (whoBorrowMe.isPresent()) whoBorrowMe.get().returningBook(this);
+//        else {
+//            //if else, search all users of borrowList
+//            //my first attempt was making static method on library that will search all user borrowing data
+//            //but static makes static everything and that's annoying as f-
+//
+//
+//        }
+//    }
+//
+//    public boolean isOutOnLoan() {
+//        return isOutOnLoan;
+//    }
+//
+//    public String getBookInfo() {
+//        return "Title: \"" + title + "\" Author: \"" + author + "\" isbn: \"" + isbn + "\"";
+//    }
+//
+//}
 
 class Book {
-    private final String title; // maybe public ?
-    private final String author;
-    private final String isbn;
+    public final String title; // maybe public ?
+    public final String author;
+    public final String isbn;
     private boolean isOutOnLoan;
     // when ppl borrow a book, this User variable hold info about who is borrowing. and when ppl returen the book,
     // use this User info to remove the book from their borrowList.
@@ -47,9 +95,8 @@ class Book {
         isOutOnLoan = false;
         if (whoBorrowMe.isPresent()) whoBorrowMe.get().returningBook(this);
         else {
-            //if else, search all users of borrowList
-            //my first attempt was making static method on library that will search all user borrowing data
-            //but static makes static everything and thats scary as f-
+            //if else, search every user's borrowList
+
 
 
         }
@@ -58,17 +105,10 @@ class Book {
     public boolean isOutOnLoan() {
         return isOutOnLoan;
     }
-
-    public String getBookInfo() {
-        return "Title: \"" + title + "\" Author: \"" + author + "\" isbn: \"" + isbn + "\"";
-    }
-
 }
 
 
-// if(public final variable == (private final variable + getter)) {
-// delete getter and replace private final variable to public final variable
-// }
+
 
 class User {
     private final String userID;
@@ -97,9 +137,7 @@ class User {
         return userID;
     }
 
-    public String getBorrowingBookNameData(){
 
-    }
 
 
     // need getBorrowList
