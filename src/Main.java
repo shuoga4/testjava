@@ -72,10 +72,10 @@ class Book {
     public final String title; // maybe public ?
     public final String author;
     public final String isbn;
-    private boolean isOutOnLoan;
+    public boolean isOutOnLoan;
     // when ppl borrow a book, this User variable hold info about who is borrowing. and when ppl returen the book,
     // use this User info to remove the book from their borrowList.
-    private Optional<User> whoBorrowMe;
+    public Optional<User> whoBorrowMe;
 
     Book(String title, String author, String isbn) {
         this.title = title;
@@ -93,17 +93,10 @@ class Book {
 
     public void returnOfBook() {
         isOutOnLoan = false;
-        if (whoBorrowMe.isPresent()) whoBorrowMe.get().returningBook(this);
-        else {
-            //if else, search every user's borrowList
-
-
-
+        if(whoBorrowMe.isPresent()){
+            whoBorrowMe.get().returningBook(this);
+            whoBorrowMe = Optional.empty();
         }
-    }
-
-    public boolean isOutOnLoan() {
-        return isOutOnLoan;
     }
 }
 
@@ -144,6 +137,7 @@ class User {
 }
 
 // im just making class only if code looks cooler. so i dont know what encapsulation looks like.
+// and also im making variable private, cuz it feels like so programmer-ish.
 class Library {
     private final List<Book> bookList;
     private final List<User> userList;
@@ -169,12 +163,14 @@ class Library {
     }
 
     public void getBooksBack(Book book) {
-        book.returnOfBook();
+        if(book.whoBorrowMe.equals(Optional.empty())) whoIsBorrowingThisBook();
+        else book.returnOfBook();
 
     }
 // ---------------------for global searching-----------
+    private void whoIsBorrowingThisBook(){
 
-
+    }
 
 //  --------------------for searching-------------------
 //	public Book searchBookByTitle(String title){
