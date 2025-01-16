@@ -93,10 +93,9 @@ class Book {
 
     public void returnOfBook() {
         isOutOnLoan = false;
-        if(whoBorrowMe.isPresent()){
-            whoBorrowMe.get().returningBook(this);
-            whoBorrowMe = Optional.empty();
-        }
+        // i already judge whoBorrowMe has instance
+        whoBorrowMe.get().returningBook(this);
+        whoBorrowMe = Optional.empty();
     }
 }
 
