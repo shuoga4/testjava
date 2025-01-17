@@ -69,7 +69,7 @@ public class Main {
 //}
 
 class Book {
-    public final String title; // maybe public ?
+    public final String title;
     public final String author;
     public final String isbn;
     public boolean isOutOnLoan;
@@ -93,7 +93,7 @@ class Book {
 
     public void returnOfBook() {
         isOutOnLoan = false;
-        // i already judge whoBorrowMe has instance
+        // I already judge whoBorrowMe has instance
         whoBorrowMe.get().returningBook(this);
         whoBorrowMe = Optional.empty();
     }
@@ -103,9 +103,9 @@ class Book {
 
 
 class User {
-    private final String userID;
-    private final String name;
-    private final List<Book> borrowList;
+    public final String userID;
+    public final String name;
+    public final List<Book> borrowList;
 
     User(String userID, String name) {
         this.userID = userID;
@@ -121,18 +121,6 @@ class User {
         borrowList.remove(book);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-
-
-
-    // need getBorrowList
 }
 
 // im just making class only if code looks cooler. so i dont know what encapsulation looks like.
@@ -145,8 +133,7 @@ class Library {
         bookList = new ArrayList<>();
         userList = new ArrayList<>();
     }
-
-    //inner class for visualization?
+//  -------------------for registering ----------------------
     public void registerBook(Book book) {
         bookList.add(book);
     }
@@ -162,13 +149,17 @@ class Library {
     }
 
     public void getBooksBack(Book book) {
-        if(book.whoBorrowMe.equals(Optional.empty())) whoIsBorrowingThisBook();
-        else book.returnOfBook();
+        book.returnOfBook();
 
     }
-// ---------------------for global searching-----------
-    private void whoIsBorrowingThisBook(){
-
+// ---------------------when book is not returned properly-------------
+    public void whoIsBorrowingThisBook(Book whosBook){
+        whosBook.whoBorrowMe.ifPresent(user -> user.returningBook(whosBook));
+        for(User user : userList){
+            for(Book book : user.borrowList){
+                if(book.equals(whosBook)) user.returningBook(whosBook);
+            }
+        }
     }
 
 //  --------------------for searching-------------------
@@ -197,7 +188,7 @@ class Library {
 
     public List<String> getUserIDList() {
         return userList.stream()
-                .map(User::getUserID)
+                .map(user -> user.userID)
                 .toList();
 
     }
