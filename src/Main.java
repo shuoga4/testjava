@@ -97,6 +97,18 @@ class Book {
         whoBorrowMe.get().returningBook(this);
         whoBorrowMe = Optional.empty();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Book book = (Book) obj;
+        return isbn.equals(book.isbn);
+    }
 }
 
 
@@ -148,13 +160,12 @@ class Library {
         book.lendingBook(user);
     }
 
-    public void getBooksBack(Book book) {
+    public void getBookBack(Book book) {
         book.returnOfBook();
-
     }
 // ---------------------when book is not returned properly-------------
-    public void whoIsBorrowingThisBook(Book whosBook){
-        whosBook.whoBorrowMe.ifPresent(user -> user.returningBook(whosBook));
+    public void forceGetBookBack(Book whosBook){
+        whosBook.returnOfBook();
         for(User user : userList){
             for(Book book : user.borrowList){
                 if(book.equals(whosBook)) user.returningBook(whosBook);
