@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.regex.*;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
@@ -173,20 +174,34 @@ class Library {
         }
     }
 
-//  --------------------for searching-------------------
-//	public Book searchBookByTitle(String title){
-//		//general expression
-//		//should return list
-//	}
-//
-//	public Book searchBookByAuthor(String author){
-//		//general expression
-//	}
-//
-//	public Book searchBookByIsbn(String isbn){
-//		//general expression
-//		//judge isbn number by Pattern
-//	}
+//  --------------------for general searching-------------------
+	public List<Book> searchBookByTitle(String title){
+        Pattern p = Pattern.compile(".*" + Pattern.quote(title) + ".*");
+        List<Book> resultList = new ArrayList<>();
+        for(Book book : bookList){
+            Matcher m = p.matcher(book.title);
+            if(m.find()) resultList.add(book);
+        }
+        return resultList;
+	}
+
+	public List<Book> searchBookByAuthor(String author){
+        Pattern p = Pattern.compile(".*" + Pattern.quote(author) + ".*");
+        List<Book> resultList = new ArrayList<>();
+        for(Book book : bookList){
+            Matcher m = p.matcher(book.author);
+            if(m.find()) resultList.add(book);
+        }
+        return resultList;
+	}
+
+	public Optional<Book> searchBookByIsbn(String isbn){
+        Optional<Book> theBook = Optional.empty();
+        for(Book book : bookList){
+            if(isbn.equals(book.isbn)) theBook = Optional.of(book);
+        }
+        return theBook;
+	}
 
 
     //public User searchUserByName(String name){
