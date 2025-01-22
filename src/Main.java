@@ -1,6 +1,7 @@
 import java.util.*;
 import java.util.regex.*;
-import java.util.stream.Stream;
+
+// this library has only one book each isbn.
 
 public class Main {
     public static void main(String[] args) {
@@ -196,21 +197,34 @@ class Library {
 	}
 
 	public Optional<Book> searchBookByIsbn(String isbn){
-        Optional<Book> theBook = Optional.empty();
-        for(Book book : bookList){
-            if(isbn.equals(book.isbn)) theBook = Optional.of(book);
-        }
-        return theBook;
+//        Optional<Book> theBook = Optional.empty();
+//        for(Book book : bookList){
+//            if(isbn.equals(book.isbn)) theBook = Optional.of(book);
+//        }
+//        return theBook;
+        return bookList.stream()
+                .filter(book -> book.isbn.equals(isbn))
+                .findAny();
 	}
 
 
-    //public User searchUserByName(String name){
-//		//general expression
-//	}
+    public List<User> searchUserByName(String name){
+		//general expression
+        Pattern p = Pattern.compile(".*" + Pattern.quote(name) + ".*");
+        List<User> resultList = new ArrayList<>();
+        for(User user : userList){
+            Matcher m = p.matcher(user.name);
+            if(m.find()) resultList.add(user);
+        }
+        return resultList;
+	}
 //
-//	public User searchUserByUserID(String userID){
-//		//general expression
-//	}
+	public Optional<User>  searchUserByUserID(String userID){
+		//general expression
+        return userList.stream()
+                    .filter(user -> user.userID.equals(userID))
+                    .findAny();
+	}
 
     public List<String> getUserIDList() {
         return userList.stream()
