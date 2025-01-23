@@ -111,6 +111,16 @@ class Book {
         Book book = (Book) obj;
         return isbn.equals(book.isbn);
     }
+
+    @Override
+    public String toString() {
+        return "Title:" + this.title + " Author:" + this.author + " Lending status:" + returnBookState();
+    }
+
+    private String returnBookState(){
+        if(isOutOnLoan) return "On loan";
+        else return "Available now";
+    }
 }
 
 
@@ -355,8 +365,44 @@ class Front {
 
     }
 
-    public void getLibraryBookData() {
+    public void userLendBook(){
+        String id = scUtil.strCheck("Type your user ID: ");
+        String isbn = scUtil.isbnCheck("Type the ISBN of book: ");
+        if(library.searchUserByUserID(id).isPresent() && library.searchBookByIsbn(isbn).isPresent())
+            library.lendsBook(library.searchBookByIsbn(isbn).get(),library.searchUserByUserID(id).get());
+        else System.out.println("error. invalid id or isbn.");
+    }
 
+    public void ReturnBook(){
+        String isbn = scUtil.isbnCheck("Type the ISBN of book: ");
+        library.searchBookByIsbn(isbn).ifPresent(Book::returnOfBook);
+    }
+
+    public void forceReturnBook(){
+        String isbn = scUtil.isbnCheck("Type the ISBN of book: ");
+        library.searchBookByIsbn(isbn).ifPresent(library::forceGetBookBack);
+    }
+
+    public void searchBook() {
+        String num = scUtil.strCheck("""
+                MENU
+                 -1:Search the Book by title
+                 -2:Search the Book by author
+                 -3:Search the Book by isbn
+                Type the number:
+                """);
+        switch (num) {
+            case "1": searchBookByTitle();
+            case "2":
+        }
+    }
+
+    private void searchBookByTitle(){
+        List<Book> bookList = library.searchBookByTitle(scUtil.strCheck("Type the title of the Book: "));
+        System.out.println("result: ");
+        for(int i = 0; i < bookList.size(); i++){
+            System.out.println(" -" + i + ":" + bookList.get(i).toString());
+        }
     }
 
 
