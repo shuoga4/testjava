@@ -3,23 +3,6 @@ import java.util.regex.*;
 
 // this library has only one book each isbn.
 
-public class Main {
-    public static void main(String[] args) {
-        Book book = new Book("Harry Potter and the Philosopher's Stone", "J.K.Rowling", "978-4863890077");
-        System.out.println("title: " + book.title + ",author: " + book.author + ",isbn: " + book.isbn);
-
-
-        ScannerUtil scUtil = new ScannerUtil();
-
-        System.out.println(scUtil.isbnPatternDigitCheck("978-4863890077"));
-
-//		Front front = new Front();
-
-//		front.registerNewBook();
-
-
-    }
-}
 
 // if(public final variable == (private final variable + getter)) {
 // delete getter and replace private final variable to public final variable
@@ -114,7 +97,7 @@ class Book {
 
     @Override
     public String toString() {
-        return "Title:" + this.title + " Author:" + this.author + " Lending status:" + returnBookState();
+        return "Title:\"" + this.title + "\" Author:\"" + this.author + "\" Lending status:\"" + returnBookState() + "\"";
     }
 
     private String returnBookState(){
@@ -145,6 +128,10 @@ class User {
         borrowList.remove(book);
     }
 
+    @Override
+    public String toString() {
+        return "name='" + name + "', userID='" + userID + "'";
+    }
 }
 
 // im just making class only if code looks cooler. so i dont know what encapsulation looks like.
@@ -325,6 +312,12 @@ class ScannerUtil {
         return isbn;
     }
 
+    public String next(){
+        String str = sc.next();
+        sc.nextLine();
+        return str;
+    }
+
 }
 
 class Front {
@@ -384,16 +377,17 @@ class Front {
     }
 
     public void searchBook() {
-        String num = scUtil.strCheck("""
+        System.out.print("""
                 MENU
                  -1:Search the Book by title
                  -2:Search the Book by author
                  -3:Search the Book by isbn
-                Type the number:
-                """);
+                Type the number:""");
+        String num = scUtil.next();
         switch (num) {
-            case "1": searchBookByTitle();
-            case "2":
+            case "1": searchBookByTitle(); break;
+            case "2": searchBookByAuthor(); break;
+            case "3": searchBookByISBN(); break;
         }
     }
 
@@ -405,6 +399,128 @@ class Front {
         }
     }
 
+    private void searchBookByAuthor(){
+        List<Book> bookList = library.searchBookByAuthor(scUtil.strCheck("Type the Author of the Book: "));
+        System.out.println("result: ");
+        for(int i = 0; i < bookList.size(); i++){
+            System.out.println(" -" + i + ":" + bookList.get(i).toString());
+        }
+        if(bookList.isEmpty()) System.out.println(" -1:Nothing Found");
+    }
 
+    private void searchBookByISBN(){
+        Optional<Book> book = library.searchBookByIsbn(scUtil.isbnCheck("Type the ISBN of the Book: "));
+        if(book.isPresent()) System.out.println("result: \n -1:" + book.get().toString());
+        else System.out.println("result: \n -1:Nothing Found");
+
+    }
+
+    public void searchUser(){
+        System.out.println("""
+                MENU
+                 -1:Search user by name
+                 -2:Search user by id
+                Type the number:""");
+        String num = scUtil.next();
+        switch (num) {
+            case "1": searchUserByName(); break;
+            case "2": searchUserByID(); break;
+        }
+    }
+
+    private void searchUserByName(){
+        List<User> userList = library.searchUserByName(scUtil.strCheck("Type the name of the user: "));
+        System.out.println("result: ");
+        for(int i = 0; i < userList.size(); i++){
+            System.out.println(" -" + i + ":" + userList.get(i).toString());
+        }
+    }
+
+    private void searchUserByID() {
+        Optional<User> user = library.searchUserByUserID(scUtil.strCheck("Type the id of the user: "));
+        if (user.isPresent()) System.out.println("result: \n -1:" + user.get().toString());
+        else System.out.println("result: \n -1:Nothing Found");
+    }
+
+    // add some books and users for testing
+    public void test(){
+        library.registerUser(new User(makeID(),"sombra"));
+        library.registerUser(new User(makeID(),"cassidy"));
+        library.registerUser(new User(makeID(),"tracer"));
+        library.registerUser(new User(makeID(),"torb"));
+        library.registerUser(new User(makeID(),"juno"));
+        library.registerUser(new User(makeID(),"brig"));
+
+        library.registerBook(new Book("Harry Potter and the Philosopher's Stone","J.K. Rowling","978-1408855652"));
+        library.registerBook(new Book("Curious George Christmas Countdown (English Edition)", "H.A. Rey","978-0547238630"));
+        library.registerBook(new Book("Peppa Pig: Peppa's Easter Egg Hunt","Peppa Pig","978-0723271307"));
+        library.registerBook(new Book("Nexus: A Brief History of Information Networks from the Stone Age to AI (English Edition)","Yuval Noah Harari","\n" +
+                "978-1911717089"));
+        library.registerBook(new Book("Basic Grammar in Use Student's Book with Answers and Interactive eBook: Self-study Reference and Practice for Students of American English ","Raymond Murphy","978-1316646731"));
+        library.registerBook(new Book("Trump: The Art of the Deal (English Edition)","Donald Trump","978-0394555287"));
+    }
+}
+
+
+public class Main {
+    static Scanner sc = new Scanner(System.in);
+    static Front front = new Front();
+    public static void main(String[] args) {
+        front.test();
+        while (true){
+            System.out.print("""
+                Welcome:
+                  -1:register user/book
+                  -2:check the book out
+                  -3:return of the book
+                  -4:force return of the book
+                  -5:search user/book
+                  -else:end
+                  Type the number:""");
+            String str = sc.next();
+            sc.nextLine();
+            switch (str){
+                case "1": register(); break;
+                case "2": front.userLendBook(); break;
+                case "3": front.ReturnBook(); break;
+                case "4": front.forceReturnBook(); break;
+                case "5": search(); break;
+                default: return;
+            }
+
+        }
+
+
+    }
+
+    private static void register(){
+        System.out.print("""
+                Which one?
+                  -1:register book
+                  -2:register user
+                  -any:back to menu
+                  Type the number:""");
+        String num = sc.next();
+        sc.nextLine();
+        switch (num){
+            case "1": front.registerNewBook(); break;
+            case "2": front.registerNewUser(); break;
+        }
+    }
+
+    private static void search(){
+        System.out.print("""
+                Which one?
+                  -1:search book
+                  -2:search user
+                  -any:back to menu
+                  Type the number:""");
+        String num = sc.next();
+        sc.nextLine();
+        switch (num){
+            case "1": front.searchBook();
+            case "2": front.searchUser();
+        }
+    }
 }
 
