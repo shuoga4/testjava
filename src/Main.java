@@ -153,15 +153,6 @@ class Library {
         userList.add(user);
     }
 
-//  --------------------for rending and returning------------
-
-    public void lendsBook(Book book, User user) {
-        book.lendingBook(user);
-    }
-
-    public void getBookBack(Book book) {
-        book.returnOfBook();
-    }
 // ---------------------when book is not returned properly-------------
     public void forceGetBookBack(Book whosBook){
         whosBook.returnOfBook();
@@ -362,7 +353,7 @@ class Front {
         String id = scUtil.strCheck("Type your user ID: ");
         String isbn = scUtil.isbnCheck("Type the ISBN of book: ");
         if(library.searchUserByUserID(id).isPresent() && library.searchBookByIsbn(isbn).isPresent())
-            library.lendsBook(library.searchBookByIsbn(isbn).get(),library.searchUserByUserID(id).get());
+            library.searchBookByIsbn(isbn).get().lendingBook(library.searchUserByUserID(id).get());
         else System.out.println("error. invalid id or isbn.");
     }
 
